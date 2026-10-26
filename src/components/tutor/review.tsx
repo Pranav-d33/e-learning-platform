@@ -5,6 +5,7 @@ import {
   CaretDown,
   CheckCircle,
   Circle,
+  FileText,
   PencilSimple,
   Play,
   Quotes,
@@ -420,7 +421,10 @@ export function QuizReview({ id }: { id: string }) {
           )}
           {actionError && <p className="text-bad">{actionError}</p>}
         </div>
-        <div className="flex gap-2 sm:ml-auto">
+        <div className="flex flex-wrap gap-2 sm:ml-auto">
+          <LinkButton variant="secondary" href={`/tutor/paper/${quiz.id}`} icon={<FileText className="size-4" />}>
+            Practice paper
+          </LinkButton>
           <LinkButton variant="secondary" href={`/tutor/generate?doc=${quiz.documentIds[0]}`} icon={<SlidersHorizontal className="size-4" />}>
             Adjust setup
           </LinkButton>

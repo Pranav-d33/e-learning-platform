@@ -3,7 +3,7 @@
 import { ArrowFatLeft, ArrowFatRight, CaretDown, Ear, HandPointing, Images, SpeakerHigh, SquaresFour, Stop } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { pictureUrl } from "@/lib/early/pictures";
 import { markExplored, progressKey, useProgress } from "@/lib/early/progress";
 import { speaker } from "@/lib/early/speaker";
@@ -27,6 +27,8 @@ export function LessonView({ lesson, nav, meta }: { lesson: EarlyLesson; nav: Le
   const state = useSpeakerState();
   const progress = useProgress();
   const traced = progress.attempts[progressKey(lang, lesson.slug)]?.completed;
+  const [lower, setLower] = useState(false);
+  const shownChar = lang === "en" && lower ? lesson.character.toLowerCase() : lesson.character;
 
   useEffect(() => {
     markExplored(lang, lesson.slug, lesson.character);
@@ -72,6 +74,32 @@ export function LessonView({ lesson, nav, meta }: { lesson: EarlyLesson; nav: Le
         <span className="font-kid text-lg font-bold text-ink-2 tabular">
           {nav.index + 1} / {nav.total}
         </span>
+        {lang === "en" && (
+          <div role="group" aria-label="Letter case" className="inline-flex rounded-full bg-surface p-1 ring-2 ring-line shadow-[0_4px_0_var(--color-line-2)]">
+            <button
+              type="button"
+              onClick={() => setLower(false)}
+              aria-pressed={!lower}
+              className={cn(
+                "rounded-full px-3.5 py-1 font-kid text-lg font-bold transition-colors",
+                !lower ? "bg-tang text-white" : "text-ink-2 hover:text-ink",
+              )}
+            >
+              Big {lesson.character}
+            </button>
+            <button
+              type="button"
+              onClick={() => setLower(true)}
+              aria-pressed={lower}
+              className={cn(
+                "rounded-full px-3.5 py-1 font-kid text-lg font-bold transition-colors",
+                lower ? "bg-tang text-white" : "text-ink-2 hover:text-ink",
+              )}
+            >
+              Small {lesson.character.toLowerCase()}
+            </button>
+          </div>
+        )}
         <div className="ml-auto flex gap-2.5">
           {nav.prev && (
             <Link href={`/early/${lang}/${nav.prev.slug}`} aria-label={`Previous letter ${nav.prev.character}`} className="press flex h-14 items-center gap-1.5 rounded-full bg-surface px-4 font-kid text-2xl font-bold ring-2 ring-line shadow-[0_5px_0_var(--color-line-2)]">
@@ -99,7 +127,7 @@ export function LessonView({ lesson, nav, meta }: { lesson: EarlyLesson; nav: Le
           )}
         >
           <span lang={lang} className={cn("font-kid leading-none font-bold text-tang-deep", lang === "hi" ? "pt-6 text-[9.5rem] sm:text-[11rem]" : "text-[10rem] sm:text-[12rem]")}>
-            {lesson.character}
+            {shownChar}
           </span>
           {letterPlaying && <SoundBars className="absolute right-6 bottom-6 text-tang" />}
           {traced && (

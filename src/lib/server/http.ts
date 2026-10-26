@@ -93,9 +93,8 @@ export function rateLimit(req: Request, bucket: string, limit: number, windowMs 
 /* ------------------------------------------------------------------- limits */
 
 export function uploadLimits() {
-  const configured = Number(process.env.MAX_UPLOAD_MB) > 0 ? Number(process.env.MAX_UPLOAD_MB) : 15;
-  // Vercel functions reject request bodies over 4.5 MB before our code runs.
-  const platformCap = process.env.VERCEL ? 4.5 : Infinity;
-  const maxPages = Number(process.env.MAX_PDF_PAGES) > 0 ? Number(process.env.MAX_PDF_PAGES) : 250;
+  const configured = Number(process.env.MAX_UPLOAD_MB) > 0 ? Number(process.env.MAX_UPLOAD_MB) : 50;
+  const platformCap = process.env.VERCEL ? 50 : Infinity;
+  const maxPages = Number(process.env.MAX_PDF_PAGES) > 0 ? Number(process.env.MAX_PDF_PAGES) : 500;
   return { maxMb: Math.min(configured, platformCap), configuredMb: configured, platformCapped: configured > platformCap, maxPages };
 }

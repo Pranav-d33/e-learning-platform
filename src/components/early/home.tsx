@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowCounterClockwise, CaretDown, Play, SpeakerHigh } from "@phosphor-icons/react";
+import { ArrowCounterClockwise, CaretDown, GameController, Play, SpeakerHigh } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -61,8 +61,8 @@ export function EarlyHome({ slugs }: { slugs: Record<Language, string[]> }) {
         })}
       </div>
 
-      {last && (
-        <div className="flex justify-center">
+      <div className="flex flex-wrap items-center justify-center gap-4">
+        {last && (
           <Link
             href={`/early/${last.language}/${last.slug}`}
             className="press inline-flex items-center gap-3 rounded-full bg-surface py-2.5 pr-6 pl-2.5 font-kid text-lg font-bold ring-2 ring-sun/60 shadow-[0_5px_0_var(--color-sun-deep)]"
@@ -72,8 +72,17 @@ export function EarlyHome({ slugs }: { slugs: Record<Language, string[]> }) {
             </span>
             Continue with <span className="text-2xl text-tang-deep" lang={last.language}>{last.character}</span>
           </Link>
-        </div>
-      )}
+        )}
+        <Link
+          href="/early/games"
+          className="press inline-flex items-center gap-3 rounded-full bg-berry py-2.5 pr-6 pl-3 font-kid text-lg font-bold text-white shadow-[0_5px_0_var(--color-berry-deep)]"
+        >
+          <span className="grid size-11 place-items-center rounded-full bg-white/20 text-white">
+            <GameController weight="fill" className="size-6" />
+          </span>
+          Play Mini-Games! · खेल खेलो
+        </Link>
+      </div>
 
       <AudioUnavailable readAloud="“Who is learning today? Pick English or Hindi.”" />
 

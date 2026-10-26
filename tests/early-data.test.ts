@@ -18,6 +18,13 @@ describe("curated lesson data", () => {
       expect(l.exampleWords.length, l.character).toBeGreaterThanOrEqual(2);
       expect(l.exampleWords.length, l.character).toBeLessThanOrEqual(3);
       expect(l.glyph.kind).toBe("strokes");
+      expect(l.lowerGlyph?.kind, l.slug).toBe("strokes");
+      if (l.lowerGlyph?.kind === "strokes") {
+        expect(l.lowerGlyph.strokes.length, l.slug).toBeGreaterThanOrEqual(1);
+        for (const s of l.lowerGlyph.strokes) {
+          expect(flattenPath(s.d).length, `${l.slug}:${s.id}`).toBeGreaterThan(0);
+        }
+      }
     }
   });
 

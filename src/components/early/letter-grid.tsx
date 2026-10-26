@@ -1,10 +1,13 @@
 "use client";
 
-import { ArrowLeft, Star } from "@phosphor-icons/react";
+import { ArrowLeft, GameController, Star } from "@phosphor-icons/react";
 import Link from "next/link";
+import { useState } from "react";
 import { progressKey, summary, useProgress } from "@/lib/early/progress";
 import type { Language } from "@/lib/early/types";
 import { cn } from "@/lib/cn";
+
+type LetterCase = "upper" | "lower" | "both";
 
 interface Tile {
   slug: string;
@@ -25,24 +28,33 @@ const COPY = {
   hi: { title: "अक्षर चुनो", vowels: "स्वर · vowels", consonants: "व्यंजन · consonants", back: "Languages" },
 };
 
-function TileLink({ t, language, i }: { t: Tile; language: Language; i: number }) {
+function TileLink({ t, language, i, letterCase }: { t: Tile; language: Language; i: number; letterCase: LetterCase }) {
   const progress = useProgress();
   const k = progressKey(language, t.slug);
   const traced = progress.attempts[k]?.completed;
   const explored = !!progress.explored[k];
+  const lower = t.character.toLowerCase();
+  const display =
+    language !== "en" || letterCase === "upper"
+      ? t.character
+      : letterCase === "lower"
+        ? lower
+        : `${t.character}${lower}`;
+  const href = language === "en" && letterCase === "lower" ? `/early/${language}/${t.slug}?case=lower` : `/early/${language}/${t.slug}`;
   return (
     <Link
-      href={`/early/${language}/${t.slug}`}
+      href={href}
       lang={language}
       aria-label={`${language === "en" ? "Letter" : "अक्षर"} ${t.character}${traced ? ", traced" : explored ? ", explored" : ""}`}
       className={cn(
-        "animate-pop relative grid aspect-square place-items-center rounded-[1.6rem] font-kid text-5xl font-bold ring-2 transition-transform hover:-translate-y-1 active:translate-y-1 sm:text-6xl",
+        "animate-pop relative grid aspect-square place-items-center rounded-[1.6rem] font-kid font-bold ring-2 transition-transform hover:-translate-y-1 active:translate-y-1",
+        letterCase === "both" && language === "en" ? "text-4xl sm:text-5xl" : "text-5xl sm:text-6xl",
         language === "hi" && "pt-2",
         TINTS[i % TINTS.length],
       )}
       style={{ animationDelay: `${Math.min(i, 20) * 22}ms` }}
     >
-      {t.character}
+      {display}
       {traced ? (
         <Star weight="fill" className="absolute top-2 right-2 size-6 text-sun drop-shadow-[0_1px_0_var(--color-sun-deep)]" aria-hidden="true" />
       ) : explored ? (
@@ -57,6 +69,7 @@ function TileLink({ t, language, i }: { t: Tile; language: Language; i: number }
 
 export function LetterGrid({ language, tiles }: { language: Language; tiles: Tile[] }) {
   const progress = useProgress();
+  const [letterCase, setLetterCase] = useState<LetterCase>("upper");
   const s = summary(progress, language, tiles.map((t) => t.slug));
   const copy = COPY[language];
   const sections =
@@ -90,13 +103,47 @@ export function LetterGrid({ language, tiles }: { language: Language; tiles: Til
             </span>
           </div>
         </div>
+        <div className="flex flex-wrap items-center gap-2.5">
+          {language === "en" && (
+            <div role="group" aria-label="Letter case" className="inline-flex rounded-full bg-surface p-1 ring-2 ring-line shadow-[0_4px_0_var(--color-line-2)]">
+              {(
+                [
+                  { id: "upper", label: "A B C", title: "Uppercase letters" },
+                  { id: "lower", label: "a b c", title: "Lowercase letters" },
+                  { id: "both", label: "Aa Bb", title: "Both cases" },
+                ] as const
+              ).map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setLetterCase(opt.id)}
+                  aria-pressed={letterCase === opt.id}
+                  title={opt.title}
+                  className={cn(
+                    "rounded-full px-3.5 py-1.5 font-kid text-base font-bold transition-colors",
+                    letterCase === opt.id ? "bg-sky text-white shadow-xs" : "text-ink-2 hover:text-ink",
+                  )}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <Link
+            href={`/early/games?lang=${language}`}
+            className="press inline-flex items-center gap-2 rounded-full bg-berry px-4 py-2.5 font-kid text-lg font-bold text-white shadow-[0_5px_0_var(--color-berry-deep)]"
+          >
+            <GameController weight="fill" className="size-6" />
+            <span>{language === "en" ? "Play Games" : "खेल खेलो"}</span>
+          </Link>
+        </div>
       </div>
       {sections.map((sec) => (
         <section key={sec.title ?? "all"} aria-label={sec.title ?? "Letters"}>
           {sec.title && <h2 className="mb-3 font-kid text-xl font-bold text-ink-2">{sec.title}</h2>}
           <div className="grid grid-cols-3 gap-3.5 min-[480px]:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 sm:gap-4">
             {sec.items.map((t) => (
-              <TileLink key={t.slug} t={t} language={language} i={n++} />
+              <TileLink key={t.slug} t={t} language={language} i={n++} letterCase={letterCase} />
             ))}
           </div>
         </section>

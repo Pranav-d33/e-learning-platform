@@ -84,15 +84,18 @@ export function TraceView({
   const [highlight, setHighlight] = useState<string | null>(null);
   const [result, setResult] = useState<{ score: TraceScore; tone: FeedbackTone; text: string } | null>(null);
   const [celebrate, setCelebrate] = useState(0);
+  const [lower, setLower] = useState(false);
   const outlineCache = useRef<GuideGroup[] | null>(null);
 
-  const strokeBased = lesson.glyph.kind === "strokes";
-  const strokeGuide = useMemo(() => (lesson.glyph.kind === "strokes" ? strokeGroups(lesson.glyph.strokes) : null), [lesson.glyph]);
+  const activeGlyph = lang === "en" && lower && lesson.lowerGlyph ? lesson.lowerGlyph : lesson.glyph;
+  const shownChar = lang === "en" && lower ? lesson.character.toLowerCase() : lesson.character;
+  const strokeBased = activeGlyph.kind === "strokes";
+  const strokeGuide = useMemo(() => (activeGlyph.kind === "strokes" ? strokeGroups(activeGlyph.strokes) : null), [activeGlyph]);
 
   /** Outline skeletons need a canvas, so they are built on first check (client only). */
   function guideGroups(): GuideGroup[] {
     if (strokeGuide) return strokeGuide;
-    if (lesson.glyph.kind === "outline") outlineCache.current ??= outlineGroups(lesson.glyph.outline);
+    if (activeGlyph.kind === "outline") outlineCache.current ??= outlineGroups(activeGlyph.outline);
     return outlineCache.current ?? [];
   }
 
@@ -147,7 +150,39 @@ export function TraceView({
             {lesson.character}
           </span>
         </Link>
-        <h1 className="font-kid text-2xl font-bold sm:text-3xl">{lang === "en" ? "Trace it!" : "लिखो!"}</h1>
+        <h1 className="font-kid text-2xl font-bold sm:text-3xl">{lang === "en" ? `Trace ${shownChar}!` : "लिखो!"}</h1>
+        {lang === "en" && lesson.lowerGlyph && (
+          <div role="group" aria-label="Letter case" className="inline-flex rounded-full bg-surface p-1 ring-2 ring-line shadow-[0_4px_0_var(--color-line-2)]">
+            <button
+              type="button"
+              onClick={() => {
+                setLower(false);
+                clear();
+              }}
+              aria-pressed={!lower}
+              className={cn(
+                "rounded-full px-3.5 py-1 font-kid text-lg font-bold transition-colors",
+                !lower ? "bg-sky text-white" : "text-ink-2 hover:text-ink",
+              )}
+            >
+              Big {lesson.character}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setLower(true);
+                clear();
+              }}
+              aria-pressed={lower}
+              className={cn(
+                "rounded-full px-3.5 py-1 font-kid text-lg font-bold transition-colors",
+                lower ? "bg-sky text-white" : "text-ink-2 hover:text-ink",
+              )}
+            >
+              Small {lesson.character.toLowerCase()}
+            </button>
+          </div>
+        )}
         {record && (
           <span className="ml-auto text-sm font-bold text-ink-3 tabular">
             Tries: {record.attempts}
@@ -160,7 +195,7 @@ export function TraceView({
         <div className="relative mx-auto w-full max-w-[min(34rem,calc(100dvh-14rem))]">
           <TraceBoard
             ref={board}
-            glyph={lesson.glyph}
+            glyph={activeGlyph}
             guideVisible={guide}
             highlight={highlight}
             demo={demo}
@@ -168,7 +203,7 @@ export function TraceView({
               setInk(n);
               if (result) setResult(null);
             }}
-            label={`Tracing area for ${lesson.character}. Draw over the light letter with a finger, stylus or mouse.`}
+            label={`Tracing area for ${shownChar}. Draw over the light letter with a finger, stylus or mouse.`}
           />
           {celebrate > 0 && <Sparkles key={celebrate} />}
         </div>

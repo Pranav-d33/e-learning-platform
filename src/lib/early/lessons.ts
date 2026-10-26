@@ -1,5 +1,5 @@
 import type { EarlyLesson, ExampleWord, Language } from "./types";
-import { EN_STROKES } from "./strokes-en";
+import { EN_LOWER_STROKES, EN_STROKES } from "./strokes-en";
 import { HI_OUTLINES } from "./glyphs-hi";
 
 const VIEWBOX = "0 0 200 200";
@@ -62,6 +62,7 @@ const EN_LESSONS: EarlyLesson[] = EN_ROWS.map(([letter, sound, words]) => {
     ),
     instructionAudioText: "Listen, then trace the letter.",
     glyph: { kind: "strokes", viewBox: VIEWBOX, strokes: EN_STROKES[letter] },
+    lowerGlyph: { kind: "strokes", viewBox: VIEWBOX, strokes: EN_LOWER_STROKES[slug] },
     audio: { name: `/audio/en/name-${slug}.mp3`, chant: `/audio/en/chant-${slug}.mp3` },
     difficulty: "beginner",
     reviewed: false,

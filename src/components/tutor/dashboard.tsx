@@ -3,9 +3,11 @@
 import {
   ArrowRight,
   Books,
+  Cards,
   ChartBar,
   Eye,
   FilePdf,
+  FileText,
   Lightning,
   ListChecks,
   Play,
@@ -86,9 +88,12 @@ function DocRow({ doc, highlight, onDelete }: { doc: SourceDocument; highlight: 
           </p>
         )}
       </div>
-      <div className="flex shrink-0 items-center gap-2">
+      <div className="flex shrink-0 flex-wrap items-center gap-2">
         {!failed && (
           <>
+            <LinkButton variant="secondary" size="sm" href={`/tutor/study/${doc.id}`} icon={<Cards className="size-4" />}>
+              Study studio
+            </LinkButton>
             <LinkButton variant="secondary" size="sm" href={`/tutor/document/${doc.id}`} icon={<Eye className="size-4" />}>
               Preview
             </LinkButton>
@@ -132,6 +137,9 @@ function QuizRow({ q, onStart, starting }: { q: QuizSummary; onStart: () => void
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
+        <LinkButton variant="secondary" size="sm" href={`/tutor/paper/${q.id}`} icon={<FileText className="size-4" />}>
+          Paper
+        </LinkButton>
         <LinkButton variant="secondary" size="sm" href={`/tutor/review/${q.id}`} icon={<ListChecks className="size-4" />}>
           Review
         </LinkButton>

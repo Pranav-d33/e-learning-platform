@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, CaretDown, Sparkle, Trash, Warning } from "@phosphor-icons/react";
+import { ArrowLeft, Cards, CaretDown, Sparkle, Trash, Warning } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -174,9 +174,14 @@ export function DocumentView({ id }: { id: string }) {
               </Button>
             )}
             {doc.status === "ready" && (
-              <LinkButton href={`/tutor/generate?doc=${doc.id}`} icon={<Sparkle weight="fill" className="size-4" />}>
-                Build a quiz from this
-              </LinkButton>
+              <>
+                <LinkButton variant="secondary" href={`/tutor/study/${doc.id}`} icon={<Cards className="size-4" />}>
+                  Study studio
+                </LinkButton>
+                <LinkButton href={`/tutor/generate?doc=${doc.id}`} icon={<Sparkle weight="fill" className="size-4" />}>
+                  Build a quiz from this
+                </LinkButton>
+              </>
             )}
           </>
         }

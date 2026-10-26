@@ -40,6 +40,8 @@ export interface EarlyLesson {
   exampleWords: ExampleWord[];
   instructionAudioText: string;
   glyph: LessonGlyph;
+  /** Optional lowercase stroke guide for English letters (a–z). */
+  lowerGlyph?: LessonGlyph;
   audio: { name: string; chant: string };
   difficulty: "beginner";
   /** True only after a qualified adult has reviewed the content. */
