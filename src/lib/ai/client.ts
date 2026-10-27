@@ -59,6 +59,7 @@ async function post(url: string, body: unknown, cfg: { apiKey: string; provider:
       if (attempt === 0) await new Promise((r) => setTimeout(r, wait * 1000));
       continue;
     }
+    console.warn("[ai] provider rejected request", res.status, text.slice(0, 500));
     throw new AiError("bad_request", USER_MESSAGES.bad_request, `${res.status} ${text.slice(0, 500)}`);
   }
   throw lastErr ?? new AiError("unavailable", USER_MESSAGES.unavailable);

@@ -65,7 +65,7 @@ Everything is optional. Keys are read only on the server (`import "server-only"`
 | `LLM_PROVIDER` | `gemini` · `groq` · `openrouter` · `openai` · `custom` | auto-detected |
 | `LLM_MODEL` | Model name | `gemini-2.5-flash` · `llama-3.3-70b-versatile` · `google/gemini-2.5-flash` · `gpt-5-mini` |
 | `LLM_BASE_URL` | OpenAI-compatible endpoint (required for `custom`) | preset |
-| `LLM_REASONING_EFFORT` | `low`/`medium`/`high` for models that accept it | unset |
+| `LLM_REASONING_EFFORT` | `low`/`medium`/`high` for models that accept it | `low` for gpt-oss, otherwise unset |
 | `GROUNDING_JUDGE` | Second-stage AI evidence check on answer keys | `true` in live mode |
 | `LLM_TIMEOUT_MS` | Per-request timeout | `90000` |
 | `EMBEDDING_PROVIDER` / `EMBEDDING_API_KEY` / `EMBEDDING_MODEL` / `EMBEDDING_DIMENSIONS` | Embeddings for hybrid retrieval. Automatic with a Gemini or OpenAI key; Groq/OpenRouter have no embeddings API, so pair them with a Gemini key here or run BM25-only | auto / none |

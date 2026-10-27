@@ -24,7 +24,7 @@ export const PRESETS: Record<ProviderId, Preset> = {
   groq: {
     label: "Groq",
     baseUrl: "https://api.groq.com/openai/v1",
-    model: "llama-3.3-70b-versatile",
+    model: "openai/gpt-oss-120b",
     embedModel: null,
     keyEnv: ["GROQ_API_KEY"],
     keyPrefix: /^gsk_/,
@@ -32,7 +32,7 @@ export const PRESETS: Record<ProviderId, Preset> = {
   openrouter: {
     label: "OpenRouter",
     baseUrl: "https://openrouter.ai/api/v1",
-    model: "google/gemini-2.5-flash",
+    model: "openai/gpt-oss-120b",
     embedModel: null,
     keyEnv: ["OPENROUTER_API_KEY"],
     keyPrefix: /^sk-or-/,
@@ -147,7 +147,8 @@ export function getAiConfig(): AiConfig {
       apiKey,
       model,
       timeoutMs: Number.isFinite(timeout) && timeout > 0 ? timeout : 90_000,
-      reasoningEffort: env("LLM_REASONING_EFFORT") || null,
+      // gpt-oss reasons before answering and the reasoning counts toward max_tokens; keep it short by default.
+      reasoningEffort: env("LLM_REASONING_EFFORT") || (/gpt-oss/i.test(model) ? "low" : null),
       judge: !/^(0|false|no)$/i.test(env("GROUNDING_JUDGE")),
     },
     embeddings: resolveEmbeddings(provider),

@@ -258,7 +258,7 @@ describe("live mode with a mocked provider", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const quiz = await makeQuiz({ questionTypes: ["mcq", "short_answer"], questionCount: 3 });
-    expect(quiz.generator).toMatchObject({ mode: "live", model: "llama-3.3-70b-versatile" });
+    expect(quiz.generator).toMatchObject({ mode: "live", model: "openai/gpt-oss-120b" });
     const paris = quiz.questions.find((q) => q.questionText.includes("France"))!;
     expect(paris.groundingStatus).toBe("needs_review");
     expect(paris.sourceRefs).toEqual([]);
