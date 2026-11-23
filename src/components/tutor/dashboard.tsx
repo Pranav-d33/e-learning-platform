@@ -27,6 +27,7 @@ import { startQuiz } from "@/lib/client/quiz";
 import { cn } from "@/lib/cn";
 import type { Quiz, SourceDocument } from "@/lib/tutor/types";
 import { PageHeader, timeAgo } from "./chrome";
+import { LibraryPanel } from "./library-panel";
 import { UploadPanel } from "./upload-panel";
 
 interface QuizSummary {
@@ -252,7 +253,13 @@ export function TutorDashboard() {
             </ul>
           )}
         </section>
-        <div className="lg:col-span-5">
+        <div className="space-y-6 lg:col-span-5">
+          <LibraryPanel
+            onChanged={(id) => {
+              setHighlight(id ?? null);
+              void load();
+            }}
+          />
           {status ? (
             <UploadPanel
               maxMb={status.limits.maxMb}
